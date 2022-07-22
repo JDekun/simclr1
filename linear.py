@@ -74,14 +74,16 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=512, help='Number of images in each mini-batch')
     parser.add_argument('--epochs', type=int, default=100, help='Number of sweeps over the dataset to train')
     parser.add_argument('--results_path', default="results", type=str, help='results/')
+    parser.add_argument('--datasets_path', default="../../input", type=str, help='../../input')
 
     args = parser.parse_args()
     model_path, batch_size, epochs = args.model_path, args.batch_size, args.epochs
     path = args.results_path
+    path_d = args.datasets_path
 
-    train_data = CIFAR10(root='../../input', train=True, transform=utils.train_transform, download=True)
+    train_data = CIFAR10(root=path_d, train=True, transform=utils.train_transform, download=True)
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=16, pin_memory=True)
-    test_data = CIFAR10(root='../../input', train=False, transform=utils.test_transform, download=True)
+    test_data = CIFAR10(root=path_d, train=False, transform=utils.test_transform, download=True)
     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False, num_workers=16, pin_memory=True)
 
     model = Net(num_class=len(train_data.classes), pretrained_path=model_path).cuda()
