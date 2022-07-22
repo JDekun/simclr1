@@ -54,7 +54,7 @@ def train(net, data_loader, train_optimizer, example_ct, batch_ct):
         batch_ct += 1
         if ((batch_ct + 1) % 25) == 0:
             wandb.log({"epoch": epoch, "loss": loss}, step=example_ct)
-            print(f"Loss after " + str(example_ct).zfill(5) + f" examples: {loss:.3f}")
+            # print(f"Loss after " + str(example_ct).zfill(5) + f" examples: {loss:.3f}")
 
         total_num += batch_size
         total_loss += loss.item() * batch_size
