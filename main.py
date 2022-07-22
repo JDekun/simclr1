@@ -13,8 +13,15 @@ from model import Model
 
 from apex import amp
 
+import wandb
+
+wandb.login()
+
 # train for one epoch to learn unique features
-def train(net, data_loader, train_optimizer):
+def train(net, data_loader, train_optimizer, example_ct, batch_ct):
+
+    wandb.watch(net, log="all", log_freq=10)
+
     net.train()
     total_loss, total_num, train_bar = 0.0, 0, tqdm(data_loader)
     for pos_1, pos_2, target in train_bar:
@@ -42,6 +49,12 @@ def train(net, data_loader, train_optimizer):
         # loss.backward()
 
         train_optimizer.step()
+
+        example_ct +=  len(pos_1)
+        batch_ct += 1
+        if ((batch_ct + 1) % 25) == 0:
+            wandb.log({"epoch": epoch, "loss": loss}, step=example_ct)
+            print(f"Loss after " + str(example_ct).zfill(5) + f" examples: {loss:.3f}")
 
         total_num += batch_size
         total_loss += loss.item() * batch_size
@@ -90,6 +103,11 @@ def test(net, memory_data_loader, test_data_loader):
             total_top5 += torch.sum((pred_labels[:, :5] == target.unsqueeze(dim=-1)).any(dim=-1).float()).item()
             test_bar.set_description('Test Epoch: [{}/{}] Acc@1:{:.2f}% Acc@5:{:.2f}%'
                                      .format(epoch, epochs, total_top1 / total_num * 100, total_top5 / total_num * 100))
+        
+        wandb.log({"top1": total_top1 / total_num * 100, "top5": total_top5 / total_num * 100})
+    
+    torch.onnx.export(net, data, "SimCLR1.onnx")
+    wandb.save("SimCLR1.onnx")
 
     return total_top1 / total_num * 100, total_top5 / total_num * 100
 
@@ -105,7 +123,18 @@ if __name__ == '__main__':
     # args parse
     args = parser.parse_args()
     feature_dim, temperature, k = args.feature_dim, args.temperature, args.k
-    batch_size, epochs = args.batch_size, args.epochs
+    # batch_size, epochs = args.batch_size, args.epochs
+
+    config = dict(
+            epochs=args.epochs,
+            batch_size=args.batch_size,
+            dataset="CIFIR10",
+            architecture="SimCLR1")
+
+    wandb.init(project="simclr1", config=config)
+    config = wandb.config
+
+    batch_size, epochs = config.batch_size, config.epochs
 
     # data prepare
     train_data = utils.CIFAR10Pair(root='../../input', train=True, transform=utils.train_transform, download=True)
@@ -135,8 +164,12 @@ if __name__ == '__main__':
     if not os.path.exists('results'):
         os.mkdir('results')
     best_acc = 0.0
+
+    example_ct = 0  # number of examples seen
+    batch_ct = 0
+
     for epoch in range(1, epochs + 1):
-        train_loss = train(model, train_loader, optimizer)
+        train_loss = train(model, train_loader, optimizer, example_ct, batch_ct)
         results['train_loss'].append(train_loss)
         test_acc_1, test_acc_5 = test(model, memory_loader, test_loader)
         results['test_acc@1'].append(test_acc_1)
