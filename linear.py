@@ -73,9 +73,12 @@ if __name__ == '__main__':
                         help='The pretrained model path')
     parser.add_argument('--batch_size', type=int, default=512, help='Number of images in each mini-batch')
     parser.add_argument('--epochs', type=int, default=100, help='Number of sweeps over the dataset to train')
+    parser.add_argument('--results_path', default="results", type=str, help='results/')
 
     args = parser.parse_args()
     model_path, batch_size, epochs = args.model_path, args.batch_size, args.epochs
+    path = args.results_path
+
     train_data = CIFAR10(root='../../input', train=True, transform=utils.train_transform, download=True)
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=16, pin_memory=True)
     test_data = CIFAR10(root='../../input', train=False, transform=utils.test_transform, download=True)
@@ -112,7 +115,7 @@ if __name__ == '__main__':
         results['test_acc@5'].append(test_acc_5)
         # save statistics
         data_frame = pd.DataFrame(data=results, index=range(1, epoch + 1))
-        data_frame.to_csv('results/linear_statistics.csv', index_label='epoch')
+        data_frame.to_csv('{}/linear_statistics.csv'.format(path), index_label='epoch')
         if test_acc_1 > best_acc:
             best_acc = test_acc_1
-            torch.save(model.state_dict(), 'results/linear_model.pth')
+            torch.save(model.state_dict(), '{}/linear_model.pth'.format(path))
