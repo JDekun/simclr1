@@ -119,6 +119,15 @@ def test(net, memory_data_loader, test_data_loader):
 
     return total_top1 / total_num * 100, total_top5 / total_num * 100
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0', 'False'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train SimCLR')
@@ -129,7 +138,8 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', default=500, type=int, help='Number of sweeps over the dataset to train')
     parser.add_argument('--results_path', default="results", type=str, help='results/')
     parser.add_argument('--datasets_path', default="../../input", type=str, help='../../input')
-    parser.add_argument('--amp', default=True, type=bool, help='amp')
+    parser.add_argument('--amp', default=True, type=str2bool, help='amp')
+    # parser.add_argument('--amp', action='store_true', help='amp ')
     parser.add_argument('--amp_level', default='O2', type=str, help='amp_level')
 
     # args parse
