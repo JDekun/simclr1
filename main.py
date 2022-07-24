@@ -165,7 +165,7 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-6)
 
     ####### apex ######
-    if args.amp :
+    if args.amp:
         opt_level = args.amp_level
         model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level) 
 
