@@ -141,7 +141,7 @@ if __name__ == '__main__':
     parser.add_argument('--amp', default=True, type=str2bool, help='amp')
     # parser.add_argument('--amp', action='store_true', help='引用--amp时为True，没有引用时为False')
     parser.add_argument('--amp_level', default='O2', type=str, help='amp_level')
-    parser.add_argument('--use_checkpoint', default=True, type=str2bool, help='use_checkpoint')
+    parser.add_argument('--use_checkpoint', default=False, type=str2bool, help='use_checkpoint')
 
     # args parse
     args = parser.parse_args()
