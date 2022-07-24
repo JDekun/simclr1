@@ -11,10 +11,16 @@ from tqdm import tqdm
 import utils
 from model import Model
 
-from apex import amp
+try:
+    # from apex.parallel import DistributedDataParallel as DDP
+    # from apex.fp16_utils import *
+    # from apex import amp, optimizers
+    # from apex.multi_tensor_apply import multi_tensor_applier
+    from apex import amp
+except ImportError:
+    print("AMP is not installed. If --amp is True, code will fail.")  
 
 import wandb
-
 wandb.login()
 
 # train for one epoch to learn unique features
@@ -44,9 +50,11 @@ def train(net, data_loader, train_optimizer, example_ct, batch_ct):
         train_optimizer.zero_grad()
 
         ####### apex ######
-        with amp.scale_loss(loss, optimizer) as scaled_loss:
-            scaled_loss.backward()
-        # loss.backward()
+        if args.amp:
+            with amp.scale_loss(loss, optimizer) as scaled_loss:
+                scaled_loss.backward()
+        else:
+            loss.backward()
 
         train_optimizer.step()
 
@@ -121,6 +129,8 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', default=500, type=int, help='Number of sweeps over the dataset to train')
     parser.add_argument('--results_path', default="results", type=str, help='results/')
     parser.add_argument('--datasets_path', default="../../input", type=str, help='../../input')
+    parser.add_argument('--amp', default=True, type=bool, help='amp')
+    parser.add_argument('--amp_level', default='O2', type=str, help='amp_level')
 
     # args parse
     args = parser.parse_args()
@@ -129,6 +139,7 @@ if __name__ == '__main__':
     path_d = args.datasets_path
     # batch_size, epochs = args.batch_size, args.epochs
 
+    # wandb
     config = dict(
             epochs=args.epochs,
             batch_size=args.batch_size,
@@ -137,15 +148,15 @@ if __name__ == '__main__':
 
     wandb.init(project="simclr1", config=config)
     config = wandb.config
-
     batch_size, epochs = config.batch_size, config.epochs
 
     # data prepare
     train_data = utils.CIFAR10Pair(root=path_d, train=True, transform=utils.train_transform, download=True)
-    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=16, pin_memory=True,
-                              drop_last=True)
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=16, pin_memory=True,drop_last=True)
+
     memory_data = utils.CIFAR10Pair(root=path_d, train=True, transform=utils.test_transform, download=True)
     memory_loader = DataLoader(memory_data, batch_size=batch_size, shuffle=False, num_workers=16, pin_memory=True)
+
     test_data = utils.CIFAR10Pair(root=path_d, train=False, transform=utils.test_transform, download=True)
     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False, num_workers=16, pin_memory=True)
 
@@ -154,9 +165,11 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-6)
 
     ####### apex ######
-    model, optimizer = amp.initialize(model, optimizer, opt_level="O2") 
+    if args.amp :
+        opt_level = args.amp_level
+        model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level) 
 
-
+    # 计算模型的 参数量 和 浮点数
     flops, params = profile(model, inputs=(torch.randn(1, 3, 32, 32).cuda(),))
     flops, params = clever_format([flops, params])
     print('# Model Params: {} FLOPs: {}'.format(params, flops))

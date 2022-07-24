@@ -12,7 +12,14 @@ from tqdm import tqdm
 import utils
 from model import Model
 
-from apex import amp
+try:
+    # from apex.parallel import DistributedDataParallel as DDP
+    # from apex.fp16_utils import *
+    # from apex import amp, optimizers
+    # from apex.multi_tensor_apply import multi_tensor_applier
+    from apex import amp
+except ImportError:
+    print("AMP is not installed. If --amp is True, code will fail.") 
 
 
 class Net(nn.Module):
@@ -47,10 +54,12 @@ def train_val(net, data_loader, train_optimizer):
             if is_train:
                 train_optimizer.zero_grad()
 
-                 ####### apex ######
-                with amp.scale_loss(loss, optimizer) as scaled_loss:
-                    scaled_loss.backward()
-                # loss.backward()
+                ####### apex ######
+                if args.amp:
+                    with amp.scale_loss(loss, optimizer) as scaled_loss:
+                        scaled_loss.backward()
+                else:
+                    loss.backward()
                 
                 train_optimizer.step()
 
@@ -75,6 +84,8 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=100, help='Number of sweeps over the dataset to train')
     parser.add_argument('--results_path', default="results", type=str, help='results/')
     parser.add_argument('--datasets_path', default="../../input", type=str, help='../../input')
+    parser.add_argument('--amp', default=True, type=bool, help='amp')
+    parser.add_argument('--amp_level', default='O2', type=str, help='amp_level')
 
     args = parser.parse_args()
     model_path, batch_size, epochs = args.model_path, args.batch_size, args.epochs
@@ -94,7 +105,9 @@ if __name__ == '__main__':
 
 
     ####### apex ######
-    model, optimizer = amp.initialize(model, optimizer, opt_level="O2") 
+    if args.amp :
+        opt_level = args.amp_level
+        model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level) 
 
 
     flops, params = profile(model, inputs=(torch.randn(1, 3, 32, 32).cuda(),))
