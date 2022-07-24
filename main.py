@@ -139,8 +139,9 @@ if __name__ == '__main__':
     parser.add_argument('--results_path', default="results", type=str, help='results/')
     parser.add_argument('--datasets_path', default="../../input", type=str, help='../../input')
     parser.add_argument('--amp', default=True, type=str2bool, help='amp')
-    # parser.add_argument('--amp', action='store_true', help='amp ')
+    # parser.add_argument('--amp', action='store_true', help='引用--amp时为True，没有引用时为False')
     parser.add_argument('--amp_level', default='O2', type=str, help='amp_level')
+    parser.add_argument('--use_checkpoint', default=True, type=str2bool, help='use_checkpoint')
 
     # args parse
     args = parser.parse_args()
@@ -148,6 +149,8 @@ if __name__ == '__main__':
     path = args.results_path
     path_d = args.datasets_path
     # batch_size, epochs = args.batch_size, args.epochs
+    use_checkpoint = args.use_checkpoint
+
 
     # wandb
     config = dict(
@@ -171,7 +174,7 @@ if __name__ == '__main__':
     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False, num_workers=16, pin_memory=True)
 
     # model setup and optimizer config
-    model = Model(feature_dim).cuda()
+    model = Model(feature_dim, use_checkpoint).cuda()
     optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-6)
 
     ####### apex ######
