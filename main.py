@@ -117,7 +117,10 @@ def test(net, memory_data_loader, test_data_loader):
         
         wandb.log({"top1": total_top1 / total_num * 100, "top5": total_top5 / total_num * 100})
     
-    torch.onnx.export(net, data, "SimCLR1.onnx")
+    batch_size = 1
+    input_shape = (3, 32, 32)
+    x = torch.randn(batch_size,*input_shape).cuda()
+    torch.onnx.export(net,x, "SimCLR1.onnx")
     wandb.save("SimCLR1.onnx")
 
     return total_top1 / total_num * 100, total_top5 / total_num * 100
@@ -204,8 +207,8 @@ if __name__ == '__main__':
 
     ####### checkpoint ######
     if args.resume:
-        resume = torch.load(args.resume_path)
-        model.load_state_dict(resume['model'], False)
+        resume = torch.load(args.resume_path, map_location='cpu')
+        model.load_state_dict(resume['model'])
         optimizer.load_state_dict(resume['optimizer'])
         amp.load_state_dict(resume['amp'])
         start_epoch = resume['epoch'] +  1
@@ -246,3 +249,4 @@ if __name__ == '__main__':
         if test_acc_1 > best_acc:
             best_acc = test_acc_1
             torch.save(checkpoint, '{}/{}_model.pth'.format(path, save_name_pre))
+    wandb.save('{}/{}_model.pth'.format(path, save_name_pre))
