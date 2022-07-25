@@ -211,7 +211,7 @@ if __name__ == '__main__':
     ####### checkpoint ######
     if args.resume:
         resume = torch.load(args.resume_path, map_location='cpu')
-        model.load_state_dict(resume['model'])
+        model.load_state_dict(resume['model'], False)
         optimizer.load_state_dict(resume['optimizer'])
         amp.load_state_dict(resume['amp'])
         start_epoch = resume['epoch'] +  1
