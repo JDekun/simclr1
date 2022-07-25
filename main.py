@@ -23,6 +23,9 @@ except ImportError:
 import wandb
 wandb.login()
 
+import random
+import numpy as np
+
 # train for one epoch to learn unique features
 def train(net, data_loader, train_optimizer, example_ct, batch_ct):
 
@@ -129,6 +132,17 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+    os.environ["PYTHONHASHSEED"] = str(seed)  
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train SimCLR')
     parser.add_argument('--feature_dim', default=128, type=int, help='Feature dim for latent vector')
@@ -145,6 +159,7 @@ if __name__ == '__main__':
     parser.add_argument('--resume', default=False, type=str2bool, help='resume')
     parser.add_argument('--resume_path', default='results/128_0.5_200_512_10.pth', type=str, help='resume_path')
     parser.add_argument('--start_epoch', default=1, type=int, help='start_epoch')
+    parser.add_argument('--seed', default=1, type=int, help='seed')
 
     # args parse
     args = parser.parse_args()
@@ -153,7 +168,9 @@ if __name__ == '__main__':
     path_d = args.datasets_path
     # batch_size, epochs = args.batch_size, args.epochs
     use_checkpoint = args.use_checkpoint
+    start_epoch = args.start_epoch
 
+    set_seed(args.seed)
 
     # wandb
     config = dict(
@@ -185,13 +202,14 @@ if __name__ == '__main__':
         opt_level = args.amp_level
         model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level) 
 
+    ####### checkpoint ######
     if args.resume:
         resume = torch.load(args.resume_path)
-        model.load_state_dict(resume['model'])
+        model.load_state_dict(resume['model'], False)
         optimizer.load_state_dict(resume['optimizer'])
         amp.load_state_dict(resume['amp'])
-        start_epoch = resume['epoch']
-    
+        start_epoch = resume['epoch'] +  1
+
 
     # 计算模型的 参数量 和 浮点数
     flops, params = profile(model, inputs=(torch.randn(1, 3, 32, 32).cuda(),))
