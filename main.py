@@ -209,14 +209,6 @@ if __name__ == '__main__':
     example_ct = 0  # number of examples seen
     batch_ct = 0
 
-    # Save checkpoint
-    checkpoint = {
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict(),
-        'amp': amp.state_dict(),
-        'epoch': epoch
-    }
-
     for epoch in range(start_epoch, epochs + 1):
         train_loss = train(model, train_loader, optimizer, example_ct, batch_ct)
         results['train_loss'].append(train_loss)
@@ -226,6 +218,13 @@ if __name__ == '__main__':
         # save statistics
         data_frame = pd.DataFrame(data=results, index=range(1, epoch + 1))
         data_frame.to_csv('{}/{}_statistics.csv'.format(path, save_name_pre), index_label='epoch')
+        # Save checkpoint
+        checkpoint = {
+            'model': model.state_dict(),
+            'optimizer': optimizer.state_dict(),
+            'amp': amp.state_dict(),
+            'epoch': epoch
+        }
         if test_acc_1 > best_acc:
             best_acc = test_acc_1
             torch.save(checkpoint, '{}/{}_model.pth'.format(path, save_name_pre))
