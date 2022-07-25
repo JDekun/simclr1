@@ -179,13 +179,14 @@ if __name__ == '__main__':
     set_seed(args.seed)
 
     # wandb
-    config = dict(
-            epochs=args.epochs,
-            batch_size=args.batch_size,
-            dataset="CIFIR10",
-            architecture="SimCLR1")
+    # config = dict(
+    #         epochs=args.epochs,
+    #         batch_size=args.batch_size,
+    #         dataset="CIFIR10",
+    #         architecture="SimCLR1")
 
-    wandb.init(project="simclr1", config=config)
+    wandb.init(project="simclr1")
+    wandb.config.update(args)
     config = wandb.config
     batch_size, epochs = config.batch_size, config.epochs
 
