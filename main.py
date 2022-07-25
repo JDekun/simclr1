@@ -26,6 +26,9 @@ wandb.login()
 import random
 import numpy as np
 
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+os.environ["WANDB_API_KEY"] = 'ae69f83abb637683132c012cd248d4a14177cd36'
+
 # train for one epoch to learn unique features
 def train(net, data_loader, train_optimizer, example_ct, batch_ct):
 
