@@ -117,7 +117,7 @@ def test(net, memory_data_loader, test_data_loader):
         
         wandb.log({"top1": total_top1 / total_num * 100, "top5": total_top5 / total_num * 100})
     
-    torch.onnx.export(net, data, "SimCLR1.onnx")
+    torch.onnx.export(net, "SimCLR1.onnx")
     wandb.save("SimCLR1.onnx")
 
     return total_top1 / total_num * 100, total_top5 / total_num * 100
