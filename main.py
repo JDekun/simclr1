@@ -172,23 +172,15 @@ if __name__ == '__main__':
     feature_dim, temperature, k = args.feature_dim, args.temperature, args.k
     path = args.results_path
     path_d = args.datasets_path
-    # batch_size, epochs = args.batch_size, args.epochs
+    batch_size, epochs = args.batch_size, args.epochs
     use_checkpoint = args.use_checkpoint
     start_epoch = args.start_epoch
 
     set_seed(args.seed)
 
     # wandb
-    # config = dict(
-    #         epochs=args.epochs,
-    #         batch_size=args.batch_size,
-    #         dataset="CIFIR10",
-    #         architecture="SimCLR1")
-
     wandb.init(project="simclr1")
     wandb.config.update(args)
-    config = wandb.config
-    batch_size, epochs = config.batch_size, config.epochs
 
     # data prepare
     train_data = utils.CIFAR10Pair(root=path_d, train=True, transform=utils.train_transform, download=True)
