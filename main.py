@@ -21,7 +21,7 @@ except ImportError:
     print("AMP is not installed. If --amp is True, code will fail.")  
 
 import wandb
-wandb.login()
+# wandb.login()
 
 import random
 import numpy as np
