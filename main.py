@@ -142,6 +142,9 @@ if __name__ == '__main__':
     # parser.add_argument('--amp', action='store_true', help='引用--amp时为True，没有引用时为False')
     parser.add_argument('--amp_level', default='O2', type=str, help='amp_level')
     parser.add_argument('--use_checkpoint', default=False, type=str2bool, help='use_checkpoint')
+    parser.add_argument('--resume', default=False, type=str2bool, help='resume')
+    parser.add_argument('--resume_path', default='results/128_0.5_200_512_10.pth', type=str, help='resume_path')
+    parser.add_argument('--start_epoch', default=1, type=int, help='start_epoch')
 
     # args parse
     args = parser.parse_args()
@@ -182,6 +185,14 @@ if __name__ == '__main__':
         opt_level = args.amp_level
         model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level) 
 
+    if args.resume:
+        resume = torch.load(args.resume_path)
+        model.load_state_dict(resume['model'])
+        optimizer.load_state_dict(resume['optimizer'])
+        amp.load_state_dict(resume['amp'])
+        start_epoch = resume['epoch']
+    
+
     # 计算模型的 参数量 和 浮点数
     flops, params = profile(model, inputs=(torch.randn(1, 3, 32, 32).cuda(),))
     flops, params = clever_format([flops, params])
@@ -198,7 +209,15 @@ if __name__ == '__main__':
     example_ct = 0  # number of examples seen
     batch_ct = 0
 
-    for epoch in range(1, epochs + 1):
+    # Save checkpoint
+    checkpoint = {
+        'model': model.state_dict(),
+        'optimizer': optimizer.state_dict(),
+        'amp': amp.state_dict(),
+        'epoch': epoch
+    }
+
+    for epoch in range(start_epoch, epochs + 1):
         train_loss = train(model, train_loader, optimizer, example_ct, batch_ct)
         results['train_loss'].append(train_loss)
         test_acc_1, test_acc_5 = test(model, memory_loader, test_loader)
@@ -209,4 +228,4 @@ if __name__ == '__main__':
         data_frame.to_csv('{}/{}_statistics.csv'.format(path, save_name_pre), index_label='epoch')
         if test_acc_1 > best_acc:
             best_acc = test_acc_1
-            torch.save(model.state_dict(), '{}/{}_model.pth'.format(path, save_name_pre))
+            torch.save(checkpoint, '{}/{}_model.pth'.format(path, save_name_pre))
