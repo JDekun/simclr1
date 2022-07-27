@@ -16,7 +16,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def parse_args(script):
-    parser = argparse.ArgumentParser(description='Train SimCLR' %(script))
+    parser = argparse.ArgumentParser(description='Train SimCLR %s' %(script))
     parser.add_argument('--feature_dim', default=128, type=int, help='Feature dim for latent vector')
     parser.add_argument('--temperature', default=0.5, type=float, help='Temperature used in softmax')
     parser.add_argument('--k', default=200, type=int, help='Top k most similar images used to predict the label')
@@ -32,6 +32,7 @@ def parse_args(script):
     parser.add_argument('--resume_path', default='results/128_0.5_200_512_10.pth', type=str, help='resume_path')
     parser.add_argument('--start_epoch', default=1, type=int, help='start_epoch')
     parser.add_argument('--seed', default=1, type=int, help='seed')
+    parser.add_argument('--wandb', default='run', type=str, help='wandb sync')
 
     return parser.parse_args()
 

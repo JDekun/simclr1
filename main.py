@@ -31,6 +31,7 @@ args = parse_args('main')
 
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 os.environ["WANDB_API_KEY"] = 'ae69f83abb637683132c012cd248d4a14177cd36'
+os.environ['WANDB_MODE'] = args.wandb
 
 # train for one epoch to learn unique features
 def train(net, data_loader, train_optimizer, example_ct, batch_ct):
