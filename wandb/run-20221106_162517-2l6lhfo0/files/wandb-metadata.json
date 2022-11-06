@@ -1,0 +1,33 @@
+{
+    "os": "Linux-5.4.0-131-generic-x86_64-with-glibc2.27",
+    "python": "3.9.12",
+    "heartbeatAt": "2022-11-06T08:25:19.017797",
+    "startedAt": "2022-11-06T08:25:17.083812",
+    "docker": null,
+    "gpu": "NVIDIA GeForce GTX 1080 Ti",
+    "gpu_count": 10,
+    "cpu_count": 40,
+    "cuda": "10.0.130",
+    "args": [
+        "--batch_size",
+        "512",
+        "--use_checkpoint",
+        "False",
+        "--epochs",
+        "1",
+        "--amp",
+        "True",
+        "--amp_level",
+        "O2",
+        "--results_path",
+        "results",
+        "--datasets_path",
+        "../../input"
+    ],
+    "state": "running",
+    "program": "/home/zk/GIT/working/simclr1/main.py",
+    "codePath": "main.py",
+    "host": "GPU1",
+    "username": "zk",
+    "executable": "/home/zk/anaconda3/bin/python"
+}

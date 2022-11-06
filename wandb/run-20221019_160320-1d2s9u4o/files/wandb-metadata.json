@@ -1,0 +1,27 @@
+{
+    "os": "Linux-5.4.0-125-generic-x86_64-with-glibc2.27",
+    "python": "3.9.12",
+    "heartbeatAt": "2022-10-19T08:03:22.247337",
+    "startedAt": "2022-10-19T08:03:20.350382",
+    "docker": null,
+    "gpu": "NVIDIA GeForce GTX 1080 Ti",
+    "gpu_count": 10,
+    "cpu_count": 40,
+    "cuda": "10.0.130",
+    "args": [
+        "--batch_size",
+        "512"
+    ],
+    "state": "running",
+    "program": "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/main.py",
+    "codePath": "Contrastive_Learning/simclr1/main.py",
+    "git": {
+        "remote": "https://github.com/JDekun/recurrent.git",
+        "commit": "ff431a0752bfd0df7cd3a44567226a255c9f18ec"
+    },
+    "email": "jurry_k@outlook.com",
+    "root": "/home/zk/GIT/working/recurrent",
+    "host": "GPU1",
+    "username": "zk",
+    "executable": "/home/zk/anaconda3/bin/python"
+}

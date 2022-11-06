@@ -1,0 +1,57 @@
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+Selected optimization level O2:  FP16 training with FP32 batchnorm and FP32 master weights.
+Defaults for this optimization level are:
+enabled                : True
+opt_level              : O2
+cast_model_type        : torch.float16
+patch_torch_functions  : False
+keep_batchnorm_fp32    : True
+master_weights         : True
+loss_scale             : dynamic
+Processing user overrides (additional kwargs that are not None)...
+After processing overrides, optimization options are:
+enabled                : True
+opt_level              : O2
+cast_model_type        : torch.float16
+patch_torch_functions  : False
+keep_batchnorm_fp32    : True
+master_weights         : True
+loss_scale             : dynamic
+Warning:  multi_tensor_applier fused unscale kernel is unavailable, possibly because apex was installed without --cuda_ext --cpp_ext. Using Python fallback.  Original ImportError was: ModuleNotFoundError("No module named 'amp_C'")
+[INFO] Register count_convNd() for <class 'torch.nn.modules.conv.Conv2d'>.
+[INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm2d'>.
+[INFO] Register zero_ops() for <class 'torch.nn.modules.activation.ReLU'>.
+[INFO] Register zero_ops() for <class 'torch.nn.modules.container.Sequential'>.
+[INFO] Register count_adap_avgpool() for <class 'torch.nn.modules.pooling.AdaptiveAvgPool2d'>.
+[INFO] Register count_linear() for <class 'torch.nn.modules.linear.Linear'>.
+[INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm1d'>.
+/home/zk/anaconda3/lib/python3.9/site-packages/apex-0.1-py3.9.egg/apex/__init__.py:68: DeprecatedFeatureWarning: apex.amp is deprecated and will be removed by the end of February 2023. Use [PyTorch AMP](https://pytorch.org/docs/stable/amp.html)
+# Model Params: 24.62M FLOPs: 1.31G
+
+Train Epoch: [1/500] Loss: 5.5239:   1%|▋                                                                                                                                              | 2/390 [00:03<09:22,  1.45s/it]
+Gradient overflow.  Skipping step, loss scaler 0 reducing loss scale to 32768.0
+
+
+
+
+Train Epoch: [1/500] Loss: 5.4737:   4%|█████▍                                                                                                                                        | 15/390 [00:11<04:57,  1.26it/s]
+Traceback (most recent call last):
+  File "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/main.py", line 199, in <module>
+    train_loss = train(model, train_loader, optimizer, example_ct, batch_ct)
+  File "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/main.py", line 65, in train
+    scaled_loss.backward()
+  File "/home/zk/anaconda3/lib/python3.9/contextlib.py", line 126, in __exit__
+    next(self.gen)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/apex-0.1-py3.9.egg/apex/amp/handle.py", line 123, in scale_loss
+    optimizer._post_amp_backward(loss_scaler)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/apex-0.1-py3.9.egg/apex/amp/_process_optimizer.py", line 186, in post_backward_with_master_weights
+    scaler.unscale(
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/apex-0.1-py3.9.egg/apex/amp/scaler.py", line 119, in unscale
+    self.unscale_python(model_grads, master_grads, scale)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/apex-0.1-py3.9.egg/apex/amp/scaler.py", line 86, in unscale_python
+    self._has_overflow = scale_check_overflow_python(model,
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/apex-0.1-py3.9.egg/apex/amp/scaler.py", line 9, in scale_check_overflow_python
+    cpu_sum = float(model_grad.float().sum())
+KeyboardInterrupt

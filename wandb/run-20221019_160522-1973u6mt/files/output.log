@@ -1,0 +1,68 @@
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+[INFO] Register count_convNd() for <class 'torch.nn.modules.conv.Conv2d'>.
+[INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm2d'>.
+[INFO] Register zero_ops() for <class 'torch.nn.modules.activation.ReLU'>.
+[INFO] Register zero_ops() for <class 'torch.nn.modules.container.Sequential'>.
+[INFO] Register count_adap_avgpool() for <class 'torch.nn.modules.pooling.AdaptiveAvgPool2d'>.
+[INFO] Register count_linear() for <class 'torch.nn.modules.linear.Linear'>.
+[INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm1d'>.
+# Model Params: 24.62M FLOPs: 1.31G
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Train Epoch: [1/500] Loss: 5.0563:  35%|███████████████████████████████████████████▏                                                                                | 136/390 [01:23<02:36,  1.62it/s]
+Traceback (most recent call last):
+  File "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/main.py", line 199, in <module>
+    train_loss = train(model, train_loader, optimizer, example_ct, batch_ct)
+  File "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/main.py", line 69, in train
+    train_optimizer.step()
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/optim/optimizer.py", line 113, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/autograd/grad_mode.py", line 27, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/optim/adam.py", line 157, in step
+    adam(params_with_grad,
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/optim/adam.py", line 213, in adam
+    func(params,
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/optim/adam.py", line 305, in _single_tensor_adam
+    denom = (exp_avg_sq.sqrt() / bias_correction2_sqrt).add_(eps)
+KeyboardInterrupt

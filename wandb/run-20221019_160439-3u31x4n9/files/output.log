@@ -1,0 +1,40 @@
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+[INFO] Register count_convNd() for <class 'torch.nn.modules.conv.Conv2d'>.
+[INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm2d'>.
+[INFO] Register zero_ops() for <class 'torch.nn.modules.activation.ReLU'>.
+[INFO] Register zero_ops() for <class 'torch.nn.modules.container.Sequential'>.
+[INFO] Register count_adap_avgpool() for <class 'torch.nn.modules.pooling.AdaptiveAvgPool2d'>.
+[INFO] Register count_linear() for <class 'torch.nn.modules.linear.Linear'>.
+[INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm1d'>.
+# Model Params: 24.62M FLOPs: 1.31G
+Data loading:   0%|                                                                                                                                                           | 0/195 [00:02<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/main.py", line 199, in <module>
+    train_loss = train(model, train_loader, optimizer, example_ct, batch_ct)
+  File "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/main.py", line 46, in train
+    feature_2, out_2 = net(pos_2)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1148, in _call_impl
+    result = forward_call(*input, **kwargs)
+  File "/home/zk/GIT/working/recurrent/Contrastive_Learning/simclr1/model.py", line 35, in forward
+    x = self.f(x)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/container.py", line 139, in forward
+    input = module(input)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/container.py", line 139, in forward
+    input = module(input)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torchvision/models/resnet.py", line 154, in forward
+    out = self.conv3(out)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 457, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/home/zk/anaconda3/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 453, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: CUDA out of memory. Tried to allocate 128.00 MiB (GPU 0; 10.92 GiB total capacity; 10.00 GiB already allocated; 105.50 MiB free; 10.04 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
